@@ -22,7 +22,7 @@ class CourseSubscriptionManager
             $sub = (new CourseSubscription())
                 ->setUser($user)
                 ->setCourse($course);
-            $this->em->persist($sub);
+            $this->em->persist(object: $sub);
         }
 
         

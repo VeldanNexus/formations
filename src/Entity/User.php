@@ -194,4 +194,9 @@ public function removeCourseSubscription(CourseSubscription $sub): self
     }
     return $this;
 }
+
+    public function __toString(): string
+    {
+        return $this->email;  
+    }
 }
