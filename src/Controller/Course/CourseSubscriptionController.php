@@ -22,7 +22,7 @@ class CourseSubscriptionController extends AbstractController
 
         $manager->subscribe($this->getUser(), $course);
         $this->addFlash('success', 'Subscribed successfully!');
-        return $this->redirectToRoute('calendar_page', ['id' => $course->getId()]);
+        return $this->redirectToRoute('app_my_courses', ['id' => $course->getId()]);
     }
 
     #[Route('/courses/{id}/unsubscribe', name: 'course_unsubscribe', methods: ['POST'])]
@@ -32,6 +32,6 @@ class CourseSubscriptionController extends AbstractController
 
         $manager->cancel($this->getUser(), $course);
         $this->addFlash('info', 'Subscription canceled.');
-        return $this->redirectToRoute('course_show', ['id' => $course->getId()]);
+        return $this->redirectToRoute('app_my_courses', ['id' => $course->getId()]);
     }
 }

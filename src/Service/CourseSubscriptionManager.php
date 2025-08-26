@@ -31,14 +31,16 @@ class CourseSubscriptionManager
         return $sub;
     }
 
-    public function cancel(User $user, Course $course): void
-    {
-        $sub = $this->repo->findOneByUserAndCourse($user, $course);
-        if (!$sub) return;
-
-    
-        $this->em->flush();
+public function cancel(User $user, Course $course): void
+{
+    $sub = $this->repo->findOneByUserAndCourse($user, $course);
+    if (!$sub) {
+        return;  
     }
+
+    $this->em->remove($sub);   
+    $this->em->flush();        
+}
 
  
 

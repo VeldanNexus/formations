@@ -15,7 +15,16 @@ class CourseRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Course::class);
     }
-
+ public function findByUser($user): array
+    {
+        return $this->createQueryBuilder('cs')
+            ->join('cs.course', 'c')
+            ->addSelect('c')
+            ->where('cs.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
     //    /**
     //     * @return Course[] Returns an array of Course objects
     //     */
