@@ -1,0 +1,49 @@
+{# templates/calendar/page.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendar{% endblock %}
+
+{% block body %}
+  <div class="container" style="max-width: 1100px; margin: 2rem auto;">
+    <h1 style="margin-bottom: 1rem;">FullCalendar</h1>
+    <div id="calendar"></div>
+  </div>
+
+  {# FullCalendar via CDN (v6) #}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/locales-all.global.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendar');
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        height: 'auto',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+        navLinks: true,
+        nowIndicator: true,
+        weekNumbers: true,
+        selectable: true,
+        editable: false, // set true if you plan to drag/drop
+        events: '{{ path('api_events') }}', // Symfony route to JSON
+
+        locale: 'fr',    // change to 'ar' or your preferred locale
+         eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+        dateClick(info) {
+          console.log('Clicked', info.dateStr);
+        },
+        eventClick(info) {
+          console.log('Event', info.event.id);
+        }
+      });
+
+      calendar.render();
+    });
+  </script>
+{% endblock %}
