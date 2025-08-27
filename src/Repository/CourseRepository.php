@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Course;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
+
 
 /**
  * @extends ServiceEntityRepository<Course>
@@ -25,6 +27,25 @@ class CourseRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+   public function createFilteredQB(?string $q = null/*, ?string $category = null */): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->orderBy('c.title', 'ASC');
+
+        if ($q) {
+            $qb->andWhere('c.title LIKE :q')
+               ->setParameter('q', '%'.$q.'%');
+        }
+
+        // If you later have categories:
+        // if ($category) {
+        //     $qb->andWhere('c.category = :cat')->setParameter('cat', $category);
+        // }
+
+        return $qb;
+    }
+
     //    /**
     //     * @return Course[] Returns an array of Course objects
     //     */

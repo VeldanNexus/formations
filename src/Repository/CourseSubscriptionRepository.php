@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\Course;
 use App\Entity\CourseSubscription;
 use App\Entity\User;
-use App\Enum\SubscriptionStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -24,12 +23,5 @@ class CourseSubscriptionRepository extends ServiceEntityRepository
             ->getQuery()->getOneOrNullResult();
     }
 
-    /** @return CourseSubscription[] */
-    public function findActiveByUser(User $user): array
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.user = :u')->setParameter('u', $user)
-            ->andWhere('s.status = :st')->setParameter('st', SubscriptionStatus::ACTIVE)
-            ->getQuery()->getResult();
-    }
+ 
 }

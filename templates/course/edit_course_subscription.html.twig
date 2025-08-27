@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Subscription{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Edit Subscription</h1>
+
+    <p>Current course: <strong>{{ currentCourse.title }}</strong></p>
+
+    <form method="post">
+        <div class="mb-3">
+            <label for="new_course" class="form-label">Select a new course</label>
+            <select class="form-select" name="new_course" id="new_course" required>
+                {% for course in availableCourses %}
+                    <option value="{{ course.id }}">{{ course.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Subscription</button>
+        <a href="{{ path('app_my_courses') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -3,11 +3,13 @@
 namespace App\Controller\Course;
 
 use App\Entity\Course;
+use App\Repository\CourseRepository;
 use App\Service\CourseSubscriptionManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
@@ -22,7 +24,7 @@ class CourseSubscriptionController extends AbstractController
 
         $manager->subscribe($this->getUser(), $course);
         $this->addFlash('success', 'Subscribed successfully!');
-        return $this->redirectToRoute('app_my_courses', ['id' => $course->getId()]);
+        return $this->redirectToRoute('app_my_courses');
     }
 
     #[Route('/courses/{id}/unsubscribe', name: 'course_unsubscribe', methods: ['POST'])]
@@ -32,6 +34,40 @@ class CourseSubscriptionController extends AbstractController
 
         $manager->cancel($this->getUser(), $course);
         $this->addFlash('info', 'Subscription canceled.');
-        return $this->redirectToRoute('app_my_courses', ['id' => $course->getId()]);
+        return $this->redirectToRoute('app_my_courses');
+    }
+
+    #[Route('/courses/{id}/edit-subscription', name: 'course_edit_subscription', methods: ['GET', 'POST'])]
+    public function editSubscription(
+        Course $course,
+        Request $request,
+        CourseRepository $courseRepository,
+        CourseSubscriptionManager $manager
+    ): Response {
+        $user = $this->getUser();
+
+        // Get all courses except the current one
+        $availableCourses = $courseRepository->createQueryBuilder('c')
+            ->andWhere('c.id != :current')
+            ->setParameter('current', $course->getId())
+            ->getQuery()
+            ->getResult();
+
+        if ($request->isMethod('POST')) {
+            $newCourseId = $request->request->get('new_course');
+            $newCourse = $courseRepository->find($newCourseId);
+
+            if ($newCourse) {
+                // Update subscription
+                $manager->update($user, $course, $newCourse);
+                $this->addFlash('success', 'Subscription updated successfully!');
+                return $this->redirectToRoute('app_my_courses');
+            }
+        }
+
+        return $this->render('course/edit_course_subscription.html.twig', [
+            'currentCourse' => $course,
+            'availableCourses' => $availableCourses,
+        ]);
     }
 }

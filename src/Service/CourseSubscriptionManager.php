@@ -42,7 +42,22 @@ public function cancel(User $user, Course $course): void
     $this->em->flush();        
 }
 
- 
+ public function update(User $user, Course $oldCourse, Course $newCourse): void
+{
+    // Cancel old subscription
+    $oldSub = $this->repo->findOneBy(['user' => $user, 'course' => $oldCourse]);
+    if ($oldSub) {
+        $this->em->remove($oldSub);
+    }
+
+    // Add new subscription
+    $newSub = $this->repo->findOneBy(['user' => $user, 'course' => $newCourse]);
+    if (!$newSub) {
+        $this->subscribe($user, $newCourse);
+    }
+
+    $this->em->flush();
+}
 
     public function isSubscribed(User $user, Course $course): bool
 {
